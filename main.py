@@ -1,9 +1,11 @@
 import heapq
+import os
 from tkinter import *
 
 import nltk
 
-from scraper import scrapePage;
+import sys
+sys.path.append("pytorch-transformers")
 import wikipedia
 
 def summarize(text):
@@ -39,6 +41,9 @@ def summarize(text):
     summary = ' '.join(summary_sentences)
     return summary
 
+
+
+
 def sel():
     selection = str(text.get())
     try:
@@ -47,8 +52,14 @@ def sel():
         h1=con.find("== Plot ==")
         h2=con.find("==", h1+10)
         plot=con[h1+10:h2]
-        print(summarize(plot))
-
+        sum=str(summarize(plot))
+        sentence_list = nltk.sent_tokenize(sum)
+        sum = sum.replace('"', " ")
+        print(sum)  # steps is max number of training steps
+        for i in range(len(sentence_list)):
+            inputed='python pytorch-transformers/examples/run_generation.py --model_type=gpt2 --length=800 --model_name_or_path=gpt2 --prompt="'+sentence_list[i]+'"'
+            print(inputed)
+            os.system(inputed)
 
     except wikipedia.exceptions.DisambiguationError as e:
         print("Please refine your search.")
