@@ -8,6 +8,10 @@ import sys
 sys.path.append("pytorch-transformers")
 import wikipedia
 
+f = open("story.txt", "w")
+f.write("")
+f.close()
+
 def summarize(text):
     stopwords = nltk.corpus.stopwords.words('english')
 
@@ -53,13 +57,18 @@ def sel():
         h2=con.find("==", h1+10)
         plot=con[h1+10:h2]
         sum=str(summarize(plot))
-        sentence_list = nltk.sent_tokenize(sum)
+        f = open("story.txt", "a")
+        f.write(sum)
+        f.close()
         sum = sum.replace('"', " ")
+        sentence_list = nltk.sent_tokenize(sum)
+
         print(sum)  # steps is max number of training steps
+        output=None
         for i in range(len(sentence_list)):
-            inputed='python pytorch-transformers/examples/run_generation.py --model_type=gpt2 --length=800 --model_name_or_path=gpt2 --prompt="'+sentence_list[i]+'"'
+            inputed='python pytorch-transformers/examples/run_generation.py --model_type=gpt2 --length=50 --model_name_or_path=gpt2 --prompt="'+sentence_list[i]+'"'
             print(inputed)
-            os.system(inputed)
+            output=os.system(inputed)
 
     except wikipedia.exceptions.DisambiguationError as e:
         print("Please refine your search.")
@@ -74,29 +83,17 @@ Label(root, text="Enter the Title:").pack()
 text = Entry(root)
 text.pack()
 
-Label(root, text="What type of media?").pack()
-
-
-
-R1 = Radiobutton(root, text="Book", variable=var, value=1,
-                  command=sel)
-R1.pack( anchor = W )
-
-R2 = Radiobutton(root, text="Movie", variable=var, value=2,
-                  command=sel)
-R2.pack( anchor = W )
-
-R3 = Radiobutton(root, text="Game", variable=var, value=3,
-                  command=sel)
-R3.pack( anchor = W)
-
+b1=Button(root,
+          text='Write!',
+          command=sel)
+b1.pack()
 
 label = Label(root)
 label.pack()
 
-b1=Button(root,
+b2=Button(root,
           text='Quit',
           command=root.quit)
-b1.pack()
+b2.pack()
 
 root.mainloop()
