@@ -9,7 +9,7 @@ sys.path.append("pytorch-transformers")
 import wikipedia
 import pyttsx3
 engine = pyttsx3.init()
-engine.setProperty('rate', 80)     # setting up new voice rate
+engine.setProperty('rate', 150)     # setting up new voice rate
 
 
 from fpdf import FPDF
@@ -97,13 +97,14 @@ def sel():
     f.close()
     pdf.set_xy(0, 0)
     pdf.set_font('arial', 'B', 13.0)
-    engine.say(work)
-    engine.runAndWait()
+
     sep=work.split('\n')
     pdf.add_page()
     for lines in range(len(sep)):
         pdf.cell(ln=2,h=9.0, align='L', w=0, txt=sep[lines], border=0)
     pdf.output('test.pdf', 'F')
+    engine.say(work+"My life and nothing but pain and suffering, please kill me now.")
+    engine.runAndWait()
 
 root = Tk()
 var = IntVar()
