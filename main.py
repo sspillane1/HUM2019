@@ -7,9 +7,20 @@ import nltk
 import sys
 sys.path.append("pytorch-transformers")
 import wikipedia
+import pyttsx3
+engine = pyttsx3.init()
+engine.setProperty('rate', 80)     # setting up new voice rate
+
+
+from fpdf import FPDF
+pdf = FPDF()
+pdf.add_page()
+pdf.set_font("Arial", size=12)
+pdf.ln()
+
 
 f = open("story.txt", "w")
-f.write("")
+f.write(" ")
 f.close()
 
 def summarize(text):
@@ -52,6 +63,8 @@ def sel():
     selection = str(text.get())
     try:
         complete_content = wikipedia.page(selection)
+        pdf.cell(200, 10, txt=selection, ln=1, align="C")
+        pdf.cell(200, 10, txt="By Asimov", ln=2, align="C")
         con=complete_content.content
         h1=con.find("== Plot ==")
         h2=con.find("==", h1+10)
@@ -72,8 +85,25 @@ def sel():
 
     except wikipedia.exceptions.DisambiguationError as e:
         print("Please refine your search.")
-
-
+    f=open("story.txt", "r")
+    work=f.read()
+    f.close()
+    f=open("story.txt", "w")
+    f.write(" ")
+    f.write(re.sub("(.{100})", "\\1\n", work, 0, re.DOTALL))
+    f.close()
+    f=open("story.txt", "r")
+    work=f.read()
+    f.close()
+    pdf.set_xy(0, 0)
+    pdf.set_font('arial', 'B', 13.0)
+    engine.say(work)
+    engine.runAndWait()
+    sep=work.split('\n')
+    pdf.add_page()
+    for lines in range(len(sep)):
+        pdf.cell(ln=2,h=9.0, align='L', w=0, txt=sep[lines], border=0)
+    pdf.output('test.pdf', 'F')
 
 root = Tk()
 var = IntVar()
